@@ -1,21 +1,32 @@
+// src/App.tsx
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-// Crearemos estos componentes en el siguiente paso
 import { PublicFeedback } from './pages/public/PublicFeedback';
 import { AdminDashboard } from './pages/admin/AdminDashboard';
 import { AdminLogin } from './pages/admin/AdminLogin';
+import { ProtectedRoute } from './components/ProtectedRoute';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Rutas Públicas */}
+        {/* Ruta pública */}
         <Route path="/" element={<PublicFeedback />} />
-        
-        {/* Rutas de Administración */}
+
+        {/* Login — accesible sin sesión */}
         <Route path="/admin/login" element={<AdminLogin />} />
-        <Route path="/admin" element={<AdminDashboard />} />
-        
-        {/* Fallback para URLs inexistentes */}
+
+        {/* Dashboard — protegido: ProtectedRoute verifica sesión ANTES
+            de que AdminDashboard se monte, eliminando el flash. */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
