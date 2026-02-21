@@ -2,7 +2,7 @@
 import { useRef } from 'react';
 import html2canvas from 'html2canvas';
 import { Flame, Download, MessageSquare } from 'lucide-react';
-import './QuestionGrid.css';
+import './Questiongrid.css';
 
 type Question = {
   id: string;
@@ -102,4 +102,5 @@ export function QuestionsGrid({ questions }: QuestionsGridProps) {
       </div>
     </div>
   );
+
 }
