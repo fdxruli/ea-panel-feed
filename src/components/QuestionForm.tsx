@@ -56,7 +56,7 @@ export function QuestionForm({ isActive }: QuestionFormProps) {
           <div className="section-label">Tu pregunta</div>
           <textarea 
             rows={4} 
-            placeholder="Ej. ¿Qué tan picante es la salsa fuego?"
+            placeholder="Ej. ¿Qué tan picante es la salsa Mango Habanero?"
             {...register('pregunta')}
           ></textarea>
           {errors.pregunta && <span className="msg show error">{errors.pregunta.message}</span>}
@@ -80,4 +80,5 @@ export function QuestionForm({ isActive }: QuestionFormProps) {
       </form>
     </div>
   );
+
 }
