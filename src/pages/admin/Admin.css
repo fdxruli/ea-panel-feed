@@ -9,6 +9,17 @@
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* --- LOADING --- */
+.dash-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40vh;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+}
+
 /* --- LOGIN --- */
 .login-container {
   max-width: 400px;
@@ -118,13 +129,15 @@
 }
 
 .section-title {
-  font-size: 1.25rem;
-  margin-bottom: 1rem;
-  border-bottom: 1px solid var(--border);
-  padding-bottom: 0.5rem;
+  font-size: 1rem;
+  margin-bottom: 1.25rem;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
 }
 
-/* Tablas Responsive (Mobile First) */
+/* --- TABLA RESPONSIVE --- */
 .table-responsive {
   width: 100%;
   overflow-x: auto;
@@ -139,11 +152,11 @@
   width: 100%;
   border-collapse: collapse;
   text-align: left;
-  min-width: 600px; /* Fuerza el scroll en móviles si hay muchas columnas */
+  min-width: 580px;
   font-size: 0.875rem;
 }
 
-.admin-table th, 
+.admin-table th,
 .admin-table td {
   padding: 1rem;
   border-bottom: 1px solid var(--border);
@@ -153,9 +166,10 @@
   background: rgba(0, 0, 0, 0.03);
   font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  font-size: 0.7rem;
   color: var(--text-muted);
+  white-space: nowrap;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -169,7 +183,7 @@
 }
 
 .admin-table tbody tr {
-  transition: background-color 0.2s;
+  transition: background-color 0.15s;
 }
 
 .admin-table tbody tr:hover {
@@ -182,155 +196,42 @@
   }
 }
 
-.badge {
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  background: var(--border);
+/* --- ACCESOS RÁPIDOS (desde Resumen) --- */
+.dash-quicklinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 0.5rem;
 }
 
-/* Modificadores para pantallas más grandes */
+.dash-quicklink-btn {
+  padding: 0.6rem 1.1rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-muted);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dash-quicklink-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-glow);
+}
+
+/* --- RESPONSIVE --- */
 @media (min-width: 640px) {
   .dashboard-header {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
   }
-  
+
   .dashboard-header h1 {
-    font-size: 2rem;
+    font-size: 1.75rem;
   }
-}
-
-.questions-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2.5rem;
-}
-
-.wa-card-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  align-items: center;
-}
-
-/* El componente que se volverá imagen */
-.wa-export-card {
-  width: 100%;
-  max-width: 320px;
-  background: var(--surface);
-  border: 1px solid var(--accent);
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-  position: relative;
-  overflow: hidden;
-  /* Forzamos el tema oscuro para la exportación para que contraste en WhatsApp */
-  color: #e8e4dc;
-}
-
-.wa-export-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: var(--accent);
-}
-
-.wa-card-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 1.2rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  padding-bottom: 0.5rem;
-}
-
-.wa-brand-icon {
-  color: var(--accent);
-}
-
-.wa-brand-name {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.75rem;
-  letter-spacing: 0.15em;
-  font-weight: bold;
-  color: var(--accent-light);
-}
-
-.wa-card-date {
-  margin-left: auto;
-  font-size: 0.65rem;
-  color: rgba(255, 255, 255, 0.4);
-}
-
-.wa-card-body {
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
-}
-
-.wa-msg-icon {
-  color: rgba(255, 255, 255, 0.2);
-  flex-shrink: 0;
-  margin-top: 4px;
-}
-
-.wa-question-text {
-  margin: 0;
-  font-size: 1.1rem;
-  line-height: 1.5;
-  font-weight: 500;
-  /* Tipografía serif para darle elegancia a la pregunta */
-  font-family: 'Cormorant Garamond', serif;
-}
-
-.wa-card-footer {
-  margin-top: 1.5rem;
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.5);
-  font-family: 'DM Mono', monospace;
-  background: rgba(255, 255, 255, 0.05);
-  padding: 0.5rem;
-  border-radius: 4px;
-  text-align: center;
-}
-
-.wa-download-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
-  max-width: 320px;
-  padding: 0.75rem;
-  background: transparent;
-  border: 1px dashed var(--border-hover);
-  color: var(--text-muted);
-  border-radius: 8px;
-  cursor: pointer;
-  font-family: 'DM Mono', monospace;
-  font-size: 0.75rem;
-  transition: all 0.2s;
-}
-
-.wa-download-btn:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-  background: var(--accent-glow);
-}
-
-.empty-state {
-  grid-column: 1 / -1;
-  text-align: center;
-  padding: 3rem;
-  color: var(--text-muted);
-  border: 1px dashed var(--border);
-  border-radius: 8px;
 }

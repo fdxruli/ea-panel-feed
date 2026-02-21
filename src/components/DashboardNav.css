@@ -1,0 +1,89 @@
+/* src/components/DashboardNav.css */
+
+.dash-nav {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 2rem;
+  overflow-x: auto;            /* Scroll horizontal en móvil */
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;       /* Oculta scrollbar en Firefox */
+}
+
+.dash-nav::-webkit-scrollbar {
+  display: none;               /* Oculta scrollbar en Chrome/Safari */
+}
+
+.dash-nav-btn {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 14px 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  position: relative;
+  transition: color 0.25s ease;
+  white-space: nowrap;
+}
+
+/* Línea indicadora inferior */
+.dash-nav-btn::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.dash-nav-btn.active {
+  color: var(--text);
+}
+
+.dash-nav-btn.active::after {
+  transform: scaleX(1);
+}
+
+.dash-nav-btn:hover:not(.active) {
+  color: var(--text-dim, rgba(232, 228, 220, 0.6));
+}
+
+/* Label visible */
+.dash-nav-label {
+  /* Solo texto, sin transformaciones adicionales */
+}
+
+/* Badge numérico */
+.dash-nav-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  background: var(--accent);
+  color: white;
+  border-radius: 9px;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 1;
+}
+
+/* En pantallas medianas, los tabs tienen más espacio */
+@media (min-width: 640px) {
+  .dash-nav-btn {
+    padding: 14px 28px;
+    font-size: 11px;
+  }
+}

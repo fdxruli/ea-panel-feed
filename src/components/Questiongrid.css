@@ -1,0 +1,165 @@
+/* src/components/QuestionsGrid.css */
+
+.qg-wrapper {
+  animation: fadeIn 0.35s ease both;
+}
+
+.qg-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 1.25rem;
+}
+
+.qg-count {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text);
+  letter-spacing: 0.05em;
+}
+
+.qg-hint {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+}
+
+/* Grid de tarjetas */
+.qg-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Wrapper individual con animación de entrada */
+.qg-card-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+  animation: fadeIn 0.4s ease both;
+}
+
+/* Estado vacío */
+.qg-empty {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+}
+
+/* ─── Tarjeta exportable (heredada de Admin.css, aquí encapsulada) ─── */
+.wa-export-card {
+  width: 100%;
+  max-width: 320px;
+  background: #111110; /* Fijado para la exportación */
+  border: 1px solid var(--accent);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  position: relative;
+  overflow: hidden;
+  color: #e8e4dc;
+}
+
+.wa-export-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--accent);
+}
+
+.wa-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 1.2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 0.6rem;
+}
+
+.wa-brand-icon {
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.wa-brand-name {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  font-weight: bold;
+  color: var(--accent-light);
+}
+
+.wa-card-date {
+  margin-left: auto;
+  font-size: 0.6rem;
+  color: rgba(255, 255, 255, 0.35);
+  white-space: nowrap;
+}
+
+.wa-card-body {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.wa-msg-icon {
+  color: rgba(255, 255, 255, 0.18);
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+.wa-question-text {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.55;
+  font-weight: 500;
+  font-family: 'Cormorant Garamond', serif;
+  color: #e8e4dc;
+}
+
+.wa-card-footer {
+  margin-top: 1.25rem;
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.45);
+  font-family: 'DM Mono', monospace;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 0.45rem 0.75rem;
+  border-radius: 4px;
+  text-align: center;
+}
+
+/* Botón de descarga */
+.wa-download-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 320px;
+  padding: 0.65rem;
+  background: transparent;
+  border: 1px dashed var(--border-hover);
+  color: var(--text-muted);
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  transition: all 0.2s ease;
+}
+
+.wa-download-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-glow);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

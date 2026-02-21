@@ -1,0 +1,93 @@
+/* src/components/RatingsTable.css */
+
+.rt-wrapper {
+  animation: fadeIn 0.35s ease both;
+}
+
+.rt-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 1rem;
+}
+
+.rt-count {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text);
+  letter-spacing: 0.05em;
+}
+
+.rt-hint {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+}
+
+/* Filas con entrada animada */
+.rt-row {
+  animation: fadeIn 0.3s ease both;
+}
+
+.rt-date {
+  white-space: nowrap;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.rt-comment {
+  min-width: 180px;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--text-dim);
+}
+
+.rt-empty-cell {
+  color: var(--text-muted);
+  opacity: 0.4;
+}
+
+/* Badges con color semántico */
+.badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.badge-green {
+  color: #7ec87e;
+  background: rgba(120, 200, 120, 0.08);
+  border-color: rgba(120, 200, 120, 0.2);
+}
+
+.badge-yellow {
+  color: #d4a853;
+  background: rgba(212, 168, 83, 0.08);
+  border-color: rgba(212, 168, 83, 0.2);
+}
+
+.badge-red {
+  color: #e07070;
+  background: rgba(220, 60, 60, 0.08);
+  border-color: rgba(220, 60, 60, 0.2);
+}
+
+/* Estado vacío */
+.rt-empty {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
