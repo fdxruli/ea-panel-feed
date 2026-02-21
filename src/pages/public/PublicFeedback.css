@@ -1,0 +1,441 @@
+
+/* CRÍTICA DE ARQUITECTURA: 
+  Aplicar esto al 'body' afectará globalmente tu app (incluyendo /admin). 
+  He cambiado 'body::before' a '.feedback-wrapper::before' para encapsular el diseño, 
+  y movido los estilos base del body a esta clase envolvedora.
+  Debes envolver tu componente PublicFeedback en un <div className="feedback-wrapper"> 
+  o mover estas variables a tu index.css si quieres que toda la app use este tema.
+*/
+.feedback-wrapper {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Mono', monospace;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0;
+  overflow-x: hidden;
+  position: relative;
+  width: 100%;
+}
+
+/* Grain overlay encapsulado */
+.feedback-wrapper::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1000;
+  opacity: 0.6;
+}
+
+@media (prefers-color-scheme: dark) {
+  .feedback-wrapper::before {
+    opacity: 0.6; /* Vuelve a 0.6 en modo oscuro */
+  }
+}
+
+/* MOBILE FIRST: El contenedor base usa el 100% del ancho con padding */
+.container {
+  width: 100%;
+  padding: 0 16px 60px;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 1;
+}
+
+/* DESKTOP: Expande y limita de manera inteligente */
+@media (min-width: 600px) {
+  .container {
+    max-width: 540px;
+    padding: 0 24px 80px;
+  }
+}
+
+/* Ambient glow top */
+.ambient {
+  position: absolute; /* Cambiado de fixed a absolute para no romper el flujo global si navegas */
+  top: -200px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 400px;
+  background: radial-gradient(ellipse, rgba(200,98,26,0.08) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.container {
+  width: 100%;
+  max-width: 480px;
+  padding: 0 20px 80px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ─── HEADER ─── */
+.header {
+  padding: 52px 0 40px;
+  text-align: center;
+  animation: fadeDown 0.8s ease both;
+}
+
+.logo-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.logo-flame {
+  width: 32px;
+  height: 32px;
+  position: relative;
+  color: var(--accent);
+}
+
+.logo-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.header h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(40px, 10vw, 52px);
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin-bottom: 10px;
+  margin-top: 0;
+}
+
+.header h1 em {
+  font-style: italic;
+  color: var(--accent-light);
+}
+
+.header p {
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  font-weight: 300;
+}
+
+/* ─── TABS ─── */
+.tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 28px;
+  border-bottom: 1px solid var(--border);
+  animation: fadeDown 0.8s 0.1s ease both;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 14px 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  position: relative;
+  transition: color 0.3s ease;
+  border-radius: 0;
+}
+
+.tab-btn::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.tab-btn.active {
+  color: var(--text);
+}
+
+.tab-btn.active::after {
+  transform: scaleX(1);
+}
+
+.tab-btn:hover:not(.active) {
+  color: var(--text-dim);
+}
+
+/* ─── PANELS ─── */
+.tab-panel {
+  display: none;
+  animation: fadeIn 0.4s ease both;
+}
+
+.tab-panel.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── SECTION LABEL ─── */
+.section-label {
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ─── RATING GROUP ─── */
+.rating-group {
+  margin-bottom: 28px;
+}
+
+.rating-options {
+  display: flex;
+  gap: 6px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.rating-btn {
+  flex: 1;
+  padding: 14px 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: 'DM Mono', monospace;
+  color: var(--text-dim);
+  transition: all 0.25s ease;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.rating-btn:hover {
+  border-color: var(--border-hover);
+  color: var(--text);
+}
+
+.btn-icon {
+  margin-bottom: 8px;
+  opacity: 0.6;
+  transition: opacity 0.25s ease, transform 0.25s ease, color 0.25s ease;
+}
+
+.btn-label {
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.rating-btn:has(input:checked) {
+  background: var(--accent-glow);
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.rating-btn:has(input:checked) .btn-icon {
+  opacity: 1;
+  color: var(--accent-light);
+  transform: scale(1.1);
+}
+
+/* ─── DIVIDER ─── */
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 28px 0;
+}
+
+/* ─── TEXTAREA / INPUT ─── */
+/* Modificado input[type="number"] a input[type="tel"] para coherencia con el TSX */
+textarea, input[type="tel"], input[type="text"] {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 14px 16px;
+  color: var(--text);
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  outline: none;
+  transition: border-color 0.25s ease;
+  resize: none;
+  box-sizing: border-box;
+}
+
+textarea::placeholder, input::placeholder {
+  color: var(--text-muted);
+}
+
+textarea:focus, input:focus {
+  border-color: var(--border-hover);
+}
+
+/* ─── SUBMIT BUTTON ─── */
+.submit-btn {
+  width: 100%;
+  padding: 16px;
+  margin-top: 24px;
+  background: transparent;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  color: var(--accent-light);
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.submit-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+  z-index: -1;
+}
+
+.submit-btn:hover:not(:disabled) {
+  color: white;
+}
+
+.submit-btn:hover:not(:disabled)::before {
+  transform: translateY(0);
+}
+
+.submit-btn:active:not(:disabled) {
+  transform: scale(0.99);
+}
+
+.submit-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  border-color: var(--border);
+  color: var(--text-muted);
+}
+
+/* ─── INFO BOX ─── */
+.info-box {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px;
+  margin-bottom: 28px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  background: var(--surface);
+}
+
+.info-box-icon {
+  flex-shrink: 0;
+  margin-top: 2px;
+  opacity: 0.7;
+}
+
+.info-box-title {
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 5px;
+}
+
+.info-box-body {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* ─── FIELD GROUP ─── */
+.field-group {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+/* ─── FEEDBACK MESSAGE ─── */
+.msg {
+  display: none;
+  padding: 12px 16px;
+  border-radius: 6px;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  margin-top: 16px;
+  text-transform: uppercase;
+}
+
+.msg.show { display: block; }
+
+.msg.error {
+  border: 1px solid rgba(220,60,60,0.3);
+  background: rgba(220,60,60,0.05);
+  color: #e07070;
+}
+
+.msg.success {
+  border: 1px solid rgba(120,200,120,0.2);
+  background: rgba(120,200,120,0.05);
+  color: #7ec87e;
+}
+
+/* ─── FOOTER ─── */
+.footer {
+  padding: 40px 0 20px;
+  text-align: center;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  opacity: 0.5;
+}
