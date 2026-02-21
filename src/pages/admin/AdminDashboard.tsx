@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { StatsOverview } from '../../components/StatsOverview';
-import { RatingsTable } from '../../components/Ratingstable';
+import { RatingsTable } from '../../components/RatingsTable';
 import { QuestionsGrid } from '../../components/Questiongrid';
 import { DashboardNav, type DashboardTab } from '../../components/DashboardNav';
 import './Admin.css';
