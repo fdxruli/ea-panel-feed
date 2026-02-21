@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import html2canvas from 'html2canvas';
 import { Flame, Download, MessageSquare } from 'lucide-react';
+import { StatsOverview } from '../../components/StatsOverview';
 
 type Rating = {
   id: string;
@@ -107,6 +108,9 @@ export function AdminDashboard() {
         </header>
 
         {error && <div className="error-msg">{error}</div>}
+
+        {/* ── NUEVO: Resumen estadístico ── */}
+        <StatsOverview ratings={ratings} />
 
         <section>
           <h2 className="section-title">Últimas Calificaciones</h2>
