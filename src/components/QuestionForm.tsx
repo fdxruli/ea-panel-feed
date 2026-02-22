@@ -24,59 +24,99 @@ export function QuestionForm({ isActive }: QuestionFormProps) {
 
   const onSubmit = async (data: QuestionFormData) => {
     setMsg(null);
+
     try {
       const payload = {
         pregunta: data.pregunta,
         telefono: data.telefono === '' ? null : data.telefono
       };
-      
+
       const { error } = await supabase.from('questions').insert([payload]);
       if (error) throw error;
 
-      setMsg({ type: 'success', text: 'Pregunta recibida — atento a nuestros estados' });
+      setMsg({
+        type: 'success',
+        text: '¡Listo! En Entre Alas te respondemos muy pronto 🍗🔥'
+      });
+
       reset();
       setTimeout(() => setMsg(null), 3500);
     } catch (err) {
-      setMsg({ type: 'error', text: 'Error al enviar. Intenta de nuevo.' });
+      setMsg({
+        type: 'error',
+        text: 'Hubo un problema al enviar tu pregunta. Intenta de nuevo.'
+      });
     }
   };
 
   return (
     <div className={`tab-panel ${isActive ? 'active' : ''}`}>
+
+      {/* Info principal */}
       <div className="info-box">
         <MessageSquare className="info-box-icon" />
         <div>
-          <div className="info-box-title">Respondemos por WhatsApp</div>
-          <div className="info-box-body">Déjanos tu duda sobre ingredientes, zonas de envío o lo que necesites. Si dejas tu número te respondemos directo, o lo compartimos anónimamente en nuestros estados.</div>
+          <div className="info-box-title">En Entre Alas sí te respondemos</div>
+          <div className="info-box-body">
+            ¿Tienes duda sobre salsas, combos o envíos? Escríbenos aquí.  
+            Si dejas tu WhatsApp te contestamos directo.  
+            Si no, la respondemos anónimamente en nuestros estados.
+          </div>
         </div>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)}>
+
+        {/* Pregunta */}
         <div className="field-group">
           <div className="section-label">Tu pregunta</div>
-          <textarea 
-            rows={4} 
-            placeholder="Ej. ¿Qué tan picante es la salsa Mango Habanero?"
+          <textarea
+            rows={4}
+            placeholder={`Escribe tu duda aquí…
+Ej: ¿Qué tan picosa es la mango habanero?
+¿Hasta qué colonias envían?
+¿Hay combos para varias personas?`}
             {...register('pregunta')}
-          ></textarea>
-          {errors.pregunta && <span className="msg show error">{errors.pregunta.message}</span>}
+          />
+          {errors.pregunta && (
+            <span className="msg show error">{errors.pregunta.message}</span>
+          )}
         </div>
 
+        {/* WhatsApp */}
         <div className="field-group">
-          <div className="section-label">WhatsApp (opcional)</div>
-          <input 
-            type="tel" 
+          <div className="section-label">WhatsApp (te respondemos más rápido)</div>
+          <input
+            type="tel"
             placeholder="Ej. 55 1234 5678"
             {...register('telefono')}
           />
-          {errors.telefono && <span className="msg show error">{errors.telefono.message}</span>}
+          {errors.telefono && (
+            <span className="msg show error">{errors.telefono.message}</span>
+          )}
         </div>
 
-        {msg && <div className={`msg show ${msg.type}`}>{msg.text}</div>}
+        {/* Mensaje sistema */}
+        {msg && (
+          <div className={`msg show ${msg.type}`}>
+            {msg.text}
+          </div>
+        )}
 
-        <button type="submit" className="submit-btn" disabled={isSubmitting}>
+        {/* Nota confianza */}
+        <p className="mini-note">
+          Tu número solo se usa para responderte. No lo compartimos.
+        </p>
+
+        {/* Botón */}
+        <button
+          type="submit"
+          className="submit-btn"
+          disabled={isSubmitting}
+        >
           <span>{isSubmitting ? 'Enviando…' : 'Enviar pregunta'}</span>
         </button>
+
       </form>
     </div>
   );
