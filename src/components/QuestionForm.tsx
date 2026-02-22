@@ -73,10 +73,7 @@ export function QuestionForm({ isActive }: QuestionFormProps) {
           <div className="section-label">Tu pregunta</div>
           <textarea
             rows={4}
-            placeholder={`Escribe tu duda aquí…
-Ej: ¿Qué tan picosa es la mango habanero?
-¿Hasta qué colonias envían?
-¿Hay combos para varias personas?`}
+            placeholder={`Escribe tu duda aquí…`}
             {...register('pregunta')}
           />
           {errors.pregunta && (
@@ -89,7 +86,7 @@ Ej: ¿Qué tan picosa es la mango habanero?
           <div className="section-label">WhatsApp (te respondemos más rápido)</div>
           <input
             type="tel"
-            placeholder="Ej. 55 1234 5678"
+            placeholder="Ej. 9631834700"
             {...register('telefono')}
           />
           {errors.telefono && (
