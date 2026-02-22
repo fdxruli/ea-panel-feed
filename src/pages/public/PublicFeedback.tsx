@@ -1,17 +1,31 @@
 import { useState } from 'react';
 import { Flame } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { RatingForm } from '../../components/RatingForm';
 import { QuestionForm } from '../../components/QuestionForm';
-import './PublicFeedback.css'; 
+import './PublicFeedback.css';
 
-export function PublicFeedback() {
-  const [activeTab, setActiveTab] = useState<'rating' | 'qa'>('rating');
+type Tab = 'rating' | 'qa';
+
+type PublicFeedbackProps = {
+  defaultTab?: Tab;
+};
+
+export function PublicFeedback({ defaultTab = 'rating' }: PublicFeedbackProps) {
+  const [activeTab, setActiveTab] = useState<Tab>(defaultTab);
+  const navigate = useNavigate();
+
+  const handleTabChange = (tab: Tab) => {
+    setActiveTab(tab);
+    // Actualiza la URL sin recargar la página
+    navigate(tab === 'rating' ? '/' : '/preguntas', { replace: true });
+  };
 
   return (
     <>
       <div className="ambient"></div>
       <div className="container">
-        
+
         <header className="header">
           <div className="logo-mark">
             <div className="logo-flame">
@@ -24,17 +38,17 @@ export function PublicFeedback() {
         </header>
 
         <div className="tabs">
-          <button 
+          <button
             type="button"
             className={`tab-btn ${activeTab === 'rating' ? 'active' : ''}`}
-            onClick={() => setActiveTab('rating')}
+            onClick={() => handleTabChange('rating')}
           >
             Calificar pedido
           </button>
-          <button 
+          <button
             type="button"
             className={`tab-btn ${activeTab === 'qa' ? 'active' : ''}`}
-            onClick={() => setActiveTab('qa')}
+            onClick={() => handleTabChange('qa')}
           >
             Hacer una pregunta
           </button>
