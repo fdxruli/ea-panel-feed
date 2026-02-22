@@ -56,12 +56,13 @@ export function QuestionForm({ isActive }: QuestionFormProps) {
       <div className="info-box">
         <MessageSquare className="info-box-icon" />
         <div>
-          <div className="info-box-title">En Entre Alas sí te respondemos</div>
-          <div className="info-box-body">
-            ¿Tienes duda sobre salsas, combos o envíos? Escríbenos aquí.  
-            Si dejas tu WhatsApp te contestamos directo.  
-            Si no, la respondemos anónimamente en nuestros estados.
-          </div>
+          <div className="info-box-title">Este es el buzón de Entre Alas</div>
+<div className="info-box-body">
+  Aquí vale todo: dudas, antojos, sugerencias, quejas suaves  
+  y hasta chismes (sí, también leemos chismes 😅).  
+  Si dejas tu WhatsApp te respondemos directo.  
+  Si no, lo soltamos anónimo en nuestros estados.
+</div>
         </div>
       </div>
 
