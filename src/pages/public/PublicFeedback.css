@@ -1,10 +1,10 @@
-/* src/pages/public/PublicFeedback.css */
 
-/* ✅ .feedback-wrapper encapsula todo el diseño de la página pública.
-   Esto asegura que:
-   - El grain overlay (::before) solo afecte esta vista, no /admin.
-   - .ambient tenga un contexto de posicionamiento válido.
-   - El fondo, color y flex layout no contaminen otras rutas.
+/* CRÍTICA DE ARQUITECTURA: 
+  Aplicar esto al 'body' afectará globalmente tu app (incluyendo /admin). 
+  He cambiado 'body::before' a '.feedback-wrapper::before' para encapsular el diseño, 
+  y movido los estilos base del body a esta clase envolvedora.
+  Debes envolver tu componente PublicFeedback en un <div className="feedback-wrapper"> 
+  o mover estas variables a tu index.css si quieres que toda la app use este tema.
 */
 .feedback-wrapper {
   background: var(--bg);
@@ -20,7 +20,7 @@
   width: 100%;
 }
 
-/* Grain overlay encapsulado — solo aplica dentro de .feedback-wrapper */
+/* Grain overlay encapsulado */
 .feedback-wrapper::before {
   content: '';
   position: fixed;
@@ -33,13 +33,30 @@
 
 @media (prefers-color-scheme: dark) {
   .feedback-wrapper::before {
-    opacity: 0.6;
+    opacity: 0.6; /* Vuelve a 0.6 en modo oscuro */
+  }
+}
+
+/* MOBILE FIRST: El contenedor base usa el 100% del ancho con padding */
+.container {
+  width: 100%;
+  padding: 0 16px 60px;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 1;
+}
+
+/* DESKTOP: Expande y limita de manera inteligente */
+@media (min-width: 600px) {
+  .container {
+    max-width: 540px;
+    padding: 0 24px 80px;
   }
 }
 
 /* Ambient glow top */
 .ambient {
-  position: absolute;
+  position: absolute; /* Cambiado de fixed a absolute para no romper el flujo global si navegas */
   top: -200px;
   left: 50%;
   transform: translateX(-50%);
@@ -50,23 +67,12 @@
   z-index: 0;
 }
 
-/* ✅ CORRECCIÓN: Regla .container unificada — eliminada la copia duplicada
-   que sobreescribía el media query y fijaba max-width: 480px siempre.
-   Ahora hay una sola fuente de verdad.
-*/
 .container {
   width: 100%;
   max-width: 480px;
-  padding: 0 16px 60px;
-  box-sizing: border-box;
+  padding: 0 20px 80px;
   position: relative;
   z-index: 1;
-}
-
-@media (min-width: 600px) {
-  .container {
-    padding: 0 24px 80px;
-  }
 }
 
 /* ─── HEADER ─── */
@@ -288,6 +294,7 @@
 }
 
 /* ─── TEXTAREA / INPUT ─── */
+/* Modificado input[type="number"] a input[type="tel"] para coherencia con el TSX */
 textarea, input[type="tel"], input[type="text"] {
   width: 100%;
   background: var(--surface);

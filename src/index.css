@@ -65,17 +65,35 @@ table {
   border-collapse: collapse;
 }
 
-th, td {
-  padding: 12px;
+/* Busca y reemplaza estas reglas en src/pages/admin/Admin.css */
+
+.admin-table th,
+.admin-table td {
+  padding: 1rem 1.25rem; /* Más espacio horizontal para respirar */
   border-bottom: 1px solid var(--border);
+  vertical-align: top; /* Evita que celdas cortas se centren de forma extraña junto a comentarios largos */
 }
 
-th {
-  background: rgba(0,0,0,0.02);
+.admin-table th {
+  background: rgba(0, 0, 0, 0.04);
+  font-weight: 600; /* Mejor contraste en las cabeceras */
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.7rem;
+  color: var(--text); /* Cabeceras más oscuras, no muted */
+  white-space: nowrap;
 }
 
 @media (prefers-color-scheme: dark) {
-  th {
-    background: rgba(255,255,255,0.02);
+  .admin-table th {
+    background: rgba(255, 255, 255, 0.04);
   }
+}
+
+.admin-table tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.admin-table tbody tr:hover {
+  background: var(--accent-glow); /* Usa tu variable de acento para indicar la fila activa */
 }

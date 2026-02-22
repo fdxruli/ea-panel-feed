@@ -80,5 +80,4 @@ export function QuestionForm({ isActive }: QuestionFormProps) {
       </form>
     </div>
   );
-
 }

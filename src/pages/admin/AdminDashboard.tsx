@@ -25,18 +25,22 @@ type Question = {
 };
 
 export function AdminDashboard() {
-  const [ratings, setRatings]     = useState<Rating[]>([]);
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [loading, setLoading]     = useState(true);
-  const [error, setError]         = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<DashboardTab>('resumen');
+  const [ratings, setRatings]       = useState<Rating[]>([]);
+  const [questions, setQuestions]   = useState<Question[]>([]);
+  const [loading, setLoading]       = useState(true);
+  const [error, setError]           = useState<string | null>(null);
+  const [activeTab, setActiveTab]   = useState<DashboardTab>('resumen');
   const navigate = useNavigate();
 
   useEffect(() => {
-    // ✅ Ya no necesita verificar sesión aquí — ProtectedRoute lo garantiza
-    //    antes de que este componente se monte.
-    const loadData = async () => {
+    const init = async () => {
       try {
+        const { data: { session }, error: authError } = await supabase.auth.getSession();
+        if (authError || !session) {
+          navigate('/admin/login');
+          return;
+        }
+
         const [ratingsRes, questionsRes] = await Promise.all([
           supabase.from('ratings').select('*').order('created_at', { ascending: false }).limit(100),
           supabase.from('questions').select('*').order('created_at', { ascending: false }).limit(100),
@@ -55,23 +59,24 @@ export function AdminDashboard() {
       }
     };
 
-    loadData();
+    init();
 
-    // ✅ La suscripción a onAuthStateChange también se eliminó de aquí —
-    //    ProtectedRoute ya escucha los cambios de sesión y redirige si es necesario.
-  }, []);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_OUT' || !session) navigate('/admin/login');
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    // ProtectedRoute detecta el SIGNED_OUT y redirige automáticamente,
-    // pero navegamos explícitamente para respuesta inmediata.
     navigate('/admin/login');
   };
 
   if (loading) {
     return (
       <div className="admin-layout">
-        <div className="dash-loading">Cargando datos…</div>
+        <div className="dash-loading">Verificando credenciales…</div>
       </div>
     );
   }
@@ -97,7 +102,7 @@ export function AdminDashboard() {
           onChange={setActiveTab}
           badges={{
             calificaciones: ratings.length,
-            preguntas:      questions.length,
+            preguntas:       questions.length,
           }}
         />
 
@@ -105,11 +110,19 @@ export function AdminDashboard() {
         {activeTab === 'resumen' && (
           <section role="tabpanel" aria-label="Resumen estadístico">
             <StatsOverview ratings={ratings} />
+
+            {/* Accesos rápidos */}
             <div className="dash-quicklinks">
-              <button className="dash-quicklink-btn" onClick={() => setActiveTab('calificaciones')}>
+              <button
+                className="dash-quicklink-btn"
+                onClick={() => setActiveTab('calificaciones')}
+              >
                 Ver todas las calificaciones →
               </button>
-              <button className="dash-quicklink-btn" onClick={() => setActiveTab('preguntas')}>
+              <button
+                className="dash-quicklink-btn"
+                onClick={() => setActiveTab('preguntas')}
+              >
                 Ver preguntas de WhatsApp →
               </button>
             </div>
