@@ -35,7 +35,7 @@ export const ratingSchema = z.object({
     exactitud_pedido: z.preprocess((val) => {
         if (typeof val === 'string') return val === 'true';
         return val;
-    }, z.boolean({ required_error: 'Debes indicar si el pedido llegó completo.' })),
+    }, z.boolean({ message: 'Debes indicar si el pedido llegó completo.' })),
     problemas_exactitud: z.array(z.string()).optional(),
     llegada: z.enum(llegadaOpciones, { message: 'Debes indicar la temperatura de llegada.' }),
     empaque: z.enum(empaqueOpciones, { message: 'Debes calificar el estado del empaque.' }),
@@ -81,7 +81,7 @@ export const ratingSchema = z.object({
 });
 
 export const issueReportSchema = z.object({
-    tipo_problema: z.enum(['pedido_no_llega', 'pedido_equivocado', 'calidad_inaceptable', 'otro'], { required_error: 'Debes seleccionar el tipo de problema.' }),
+    tipo_problema: z.enum(['pedido_no_llega', 'pedido_equivocado', 'calidad_inaceptable', 'otro'] as const, { message: 'Debes seleccionar el tipo de problema.' }),
     detalles: z.string()
         .min(5, 'Explica un poco más tu problema.')
         .max(1000, 'El detalle es demasiado largo.'),
