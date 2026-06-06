@@ -1,121 +1,120 @@
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useEffect, useState } from 'react';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { MessageSquare } from 'lucide-react';
-import { questionSchema, type QuestionFormData } from '../types/schema';
+import { MessageSquare, CheckCircle } from 'lucide-react';
+import { questionSchema, type QuestionFormInput, type QuestionFormOutput } from '../types/schema';
 import { supabase } from '../lib/supabase';
 
 type QuestionFormProps = {
-  isActive: boolean;
+    isActive: boolean;
 };
 
 export function QuestionForm({ isActive }: QuestionFormProps) {
-  const [msg, setMsg] = useState<{ type: 'error' | 'success', text: string } | null>(null);
+    const [msg, setMsg] = useState<{ type: 'error' | 'success', text: string } | null>(null);
+    const [isSuccess, setIsSuccess] = useState(false);
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { isSubmitting, errors }
-  } = useForm<QuestionFormData>({
-    resolver: zodResolver(questionSchema),
-    mode: 'onSubmit'
-  });
+    useEffect(() => {
+        let timer: ReturnType<typeof setTimeout>;
+        if (msg) {
+            timer = setTimeout(() => setMsg(null), 3000);
+        }
+        // Limpieza: si el componente se desmonta antes de los 3s, el timeout se cancela.
+        return () => clearTimeout(timer);
+    }, [msg]);
 
-  const onSubmit = async (data: QuestionFormData) => {
-    setMsg(null);
+    const {
+        register,
+        handleSubmit,
+        reset,
+        control,
+        formState: { isSubmitting, errors }
+    } = useForm<QuestionFormInput, any, QuestionFormOutput>({
+        resolver: zodResolver(questionSchema),
+        mode: 'onSubmit'
+    });
 
-    try {
-      const payload = {
-        pregunta: data.pregunta,
-        telefono: data.telefono === '' ? null : data.telefono
-      };
+    const preguntaValue = useWatch({ control, name: 'pregunta' }) || '';
 
-      const { error } = await supabase.from('questions').insert([payload]);
-      if (error) throw error;
+    const onSubmit = async (data: QuestionFormOutput) => {
+        setMsg(null);
+        try {
+            // Corrección: Tabla 'questions', no 'ratings'
+            const { error } = await supabase.from('questions').insert([data]);
+            if (error) throw error;
 
-      setMsg({
-        type: 'success',
-        text: '¡Listo! En Entre Alas te respondemos muy pronto 🍗🔥'
-      });
+            setIsSuccess(true);
+            reset();
+            // El timeout ya está manejado de forma segura por el useEffect
+        } catch (err) {
+            setMsg({ type: 'error', text: 'Error al enviar. Intenta de nuevo.' });
+        }
+    };
 
-      reset();
-      setTimeout(() => setMsg(null), 3500);
-    } catch (err) {
-      setMsg({
-        type: 'error',
-        text: 'Hubo un problema al enviar tu pregunta. Intenta de nuevo.'
-      });
+    if (isSuccess) {
+        return (
+            <div className={`tab-panel ${isActive ? 'active' : ''}`}>
+                <div className="success-state">
+                    <CheckCircle className="success-icon" />
+                    <h2>Pregunta enviada</h2>
+                    <p>Atento a nuestros estados de WhatsApp, por ahí estaremos respondiendo las dudas más frecuentes.</p>
+                    <button type="button" className="submit-btn" onClick={() => setIsSuccess(false)}>
+                        <span>Hacer otra pregunta</span>
+                    </button>
+                </div>
+            </div>
+        );
     }
-  };
 
-  return (
-    <div className={`tab-panel ${isActive ? 'active' : ''}`}>
+    return (
+        <div className={`tab-panel ${isActive ? 'active' : ''}`}>
+            <div className="info-box">
+                <MessageSquare className="info-box-icon" />
+                <div>
+                    <div className="info-box-title">Respondemos por WhatsApp</div>
+                    <div className="info-box-body">Déjanos tu duda sobre ingredientes, zonas de envío o lo que necesites. Si dejas tu número te respondemos directo, o lo compartimos anónimamente en nuestros estados.</div>
+                </div>
+            </div>
 
-      {/* Info principal */}
-      <div className="info-box">
-        <MessageSquare className="info-box-icon" />
-        <div>
-          <div className="info-box-title">Este es el buzón de Entre Alas</div>
-<div className="info-box-body">
-  Aquí vale todo: dudas, antojos, sugerencias, quejas suaves  
-  y hasta chismes (sí, también leemos chismes 😅).  
-  Si dejas tu WhatsApp te respondemos directo.  
-  Si no, lo soltamos anónimo en nuestros estados.
-</div>
+            <fieldset disabled={isSubmitting} style={{ border: 'none', padding: 0, margin: 0 }}>
+                <form onSubmit={handleSubmit(onSubmit)}>
+                    <div className="question-grid">
+                        <div className="field-group textarea-wrapper">
+                            <div className="section-label">Tu pregunta</div>
+                            <textarea
+                                rows={4}
+                                placeholder="Ej. ¿Qué tan picante es la salsa Mango Habanero?"
+                                {...register('pregunta')}
+                            ></textarea>
+                            <div className={`char-counter ${preguntaValue.length > 900 ? 'warning' : ''}`}>
+                                {preguntaValue.length} / 1000
+                            </div>
+                            {errors.pregunta && <span className="msg show error">{errors.pregunta.message}</span>}
+                        </div>
+
+                        <div className="field-group">
+                            <div className="section-label">WhatsApp (opcional)</div>
+                            <input
+                                type="tel"
+                                maxLength={12}
+                                placeholder="Ej. 961 123 4567"
+                                {...register('telefono', {
+                                    onChange: (e) => {
+                                        // Destruye en tiempo real cualquier caracter que NO sea número, espacio, guion, más o paréntesis
+                                        e.target.value = e.target.value.replace(/[^\d\s\-+()]/g, '');
+                                    }
+                                })}
+                            />
+                            {errors.telefono && <span className="msg show error">{errors.telefono.message}</span>}
+                        </div>
+                    </div>
+
+                    {msg && <div className={`msg show ${msg.type}`}>{msg.text}</div>}
+
+                    <button type="submit" className="submit-btn" disabled={isSubmitting}>
+                        <span>{isSubmitting ? 'Enviando…' : 'Enviar pregunta'}</span>
+                    </button>
+                </form>
+            </fieldset>
         </div>
-      </div>
-
-      <form onSubmit={handleSubmit(onSubmit)}>
-
-        {/* Pregunta */}
-        <div className="field-group">
-          <div className="section-label">Tu pregunta</div>
-          <textarea
-            rows={4}
-            placeholder={`Escribe tu duda aquí…`}
-            {...register('pregunta')}
-          />
-          {errors.pregunta && (
-            <span className="msg show error">{errors.pregunta.message}</span>
-          )}
-        </div>
-
-        {/* WhatsApp */}
-        <div className="field-group">
-          <div className="section-label">WhatsApp (te respondemos más rápido)</div>
-          <input
-            type="tel"
-            placeholder="Ej. 9631834700"
-            {...register('telefono')}
-          />
-          {errors.telefono && (
-            <span className="msg show error">{errors.telefono.message}</span>
-          )}
-        </div>
-
-        {/* Mensaje sistema */}
-        {msg && (
-          <div className={`msg show ${msg.type}`}>
-            {msg.text}
-          </div>
-        )}
-
-        {/* Nota confianza */}
-        <p className="mini-note">
-          Tu número solo se usa para responderte. No lo compartimos.
-        </p>
-
-        {/* Botón */}
-        <button
-          type="submit"
-          className="submit-btn"
-          disabled={isSubmitting}
-        >
-          <span>{isSubmitting ? 'Enviando…' : 'Enviar pregunta'}</span>
-        </button>
-
-      </form>
-    </div>
-  );
+    );
 }

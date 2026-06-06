@@ -22,19 +22,7 @@
   color: var(--text);
 }
 
-/* TEMA OSCURO (Responde al sistema) */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #0a0a08;
-    --surface: #111110;
-    --border: rgba(255, 255, 255, 0.07);
-    --border-hover: rgba(255, 255, 255, 0.15);
-    --text: #e8e4dc;
-    --text-muted: rgba(232, 228, 220, 0.35);
-    --text-dim: rgba(232, 228, 220, 0.6);
-    --accent-glow: rgba(200, 98, 26, 0.15);
-  }
-}
+
 
 body {
   margin: 0;
@@ -84,11 +72,7 @@ table {
   white-space: nowrap;
 }
 
-@media (prefers-color-scheme: dark) {
-  .admin-table th {
-    background: rgba(255, 255, 255, 0.04);
-  }
-}
+
 
 .admin-table tbody tr {
   transition: background-color 0.2s ease;

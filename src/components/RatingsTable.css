@@ -38,18 +38,14 @@
 
 /* CORRECCIÓN: Control estricto del texto largo */
 .rt-comment {
-  min-width: 250px;
-  max-width: 350px;
+  min-width: 200px;
+  max-width: 300px;
   font-size: 0.8rem;
   line-height: 1.5;
   color: var(--text-dim);
-  /* Truncar a 2 líneas */
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  cursor: help; /* Indica que hay más contenido */
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .rt-empty-cell {
@@ -102,4 +98,59 @@
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+/* --- DIAGNOSIS --- */
+.rt-diagnosis {
+  min-width: 200px;
+  max-width: 280px;
+  white-space: normal !important;
+}
+
+.diagnosis-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin-bottom: 6px;
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.diagnosis-item:last-child {
+  margin-bottom: 0;
+}
+
+.diagnosis-icon {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.diagnosis-label {
+  font-weight: bold;
+}
+
+.diagnosis-text {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+}
+
+.diagnosis-item.error .diagnosis-icon,
+.diagnosis-item.error .diagnosis-label {
+  color: #ef4444;
+}
+
+.diagnosis-item.warning .diagnosis-icon,
+.diagnosis-item.warning .diagnosis-label {
+  color: #eab308;
+}
+
+.diagnosis-item.success .diagnosis-icon,
+.diagnosis-item.success .diagnosis-text {
+  color: #22c55e;
+}
+
+.badge-icon {
+  margin-right: 4px;
+  flex-shrink: 0;
 }

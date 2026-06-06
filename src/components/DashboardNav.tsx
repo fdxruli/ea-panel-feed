@@ -1,7 +1,7 @@
 // src/components/DashboardNav.tsx
 import './DashboardNav.css';
 
-export type DashboardTab = 'resumen' | 'calificaciones' | 'preguntas';
+export type DashboardTab = 'resumen' | 'calificaciones' | 'incidentes' | 'preguntas';
 
 type NavItem = {
   id: DashboardTab;
@@ -18,7 +18,8 @@ type DashboardNavProps = {
 const NAV_ITEMS: NavItem[] = [
   { id: 'resumen',         label: 'Resumen' },
   { id: 'calificaciones',  label: 'Calificaciones' },
-  { id: 'preguntas',       label: 'Preguntas WA' },
+  { id: 'incidentes',       label: 'Incidentes Urgentes' },
+  { id: 'preguntas', label: 'Preguntas WA' },
 ];
 
 export function DashboardNav({ active, onChange, badges = {} }: DashboardNavProps) {

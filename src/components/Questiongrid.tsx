@@ -3,23 +3,17 @@ import { useRef } from 'react';
 import html2canvas from 'html2canvas';
 import { Flame, Download, MessageSquare, Phone } from 'lucide-react';
 import './Questiongrid.css';
-
-type Question = {
-    id: string;
-    pregunta: string;
-    telefono: string | null;
-    created_at: string;
-};
+import type { Question } from '../types/schema';
 
 type QuestionsGridProps = {
     questions: Question[];
 };
 
 export function QuestionsGrid({ questions }: QuestionsGridProps) {
-    const cardRefs = useRef<Record<string, HTMLDivElement | null>>({});
+    const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map());
 
     const handleDownload = async (q: Question) => {
-        const el = cardRefs.current[q.id];
+        const el = cardRefs.current.get(q.id);
         if (!el) return;
 
         try {
@@ -61,7 +55,13 @@ export function QuestionsGrid({ questions }: QuestionsGridProps) {
                     >
                         {/* 1. TARJETA EXPORTABLE (Lo que sale en la imagen) */}
                         <div
-                            ref={el => { cardRefs.current[q.id] = el; }}
+                            ref={(node) => {
+                                if (node) {
+                                    cardRefs.current.set(q.id, node);
+                                } else {
+                                    cardRefs.current.delete(q.id);
+                                }
+                            }}
                             className="wa-export-card"
                         >
                             <div className="wa-card-header">
@@ -86,8 +86,14 @@ export function QuestionsGrid({ questions }: QuestionsGridProps) {
                         {/* 2. DATOS ADMINISTRATIVOS (Solo visibles en pantalla) */}
                         {q.telefono && (
                             <div className="admin-only-contact">
-                                <Phone size={12} />
-                                <span>{q.telefono}</span>
+                                <Phone size={14} />
+                                <a 
+                                  href={`https://wa.me/${q.telefono.replace(/\D/g, '').length === 10 ? '52' + q.telefono.replace(/\D/g, '') : q.telefono.replace(/\D/g, '')}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                >
+                                  {q.telefono}
+                                </a>
                             </div>
                         )}
 

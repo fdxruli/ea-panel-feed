@@ -1,0 +1,132 @@
+/* src/components/IncidentesGrid.css */
+
+.ig-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+}
+
+.ig-card {
+    background: var(--surface);
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+}
+
+.ig-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    align-items: flex-start;
+}
+
+.ig-date {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.ig-status {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+.ig-status.resuelto {
+    background-color: rgba(34, 197, 94, 0.1);
+    color: #22c55e;
+}
+
+.ig-status.pendiente {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+.ig-status-content {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.ig-title {
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.ig-title-icon {
+    color: #ef4444;
+}
+
+.ig-details {
+    margin-bottom: 1rem;
+    color: var(--text);
+    white-space: pre-wrap;
+    flex-grow: 1;
+}
+
+.ig-contact {
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    background: rgba(var(--accent-rgb), 0.1);
+    border-radius: 8px;
+    border: 1px dashed var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.ig-phone-icon {
+    color: var(--accent);
+}
+
+.ig-phone-link {
+    color: var(--accent);
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.ig-resolve-btn {
+    width: 100%;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 8px;
+    background: var(--accent);
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: opacity 0.2s, background-color 0.2s;
+}
+
+.ig-resolve-btn:hover:not(:disabled) {
+    background: var(--accent-light);
+}
+
+.ig-resolve-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.ig-empty {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-secondary);
+}
+
+@keyframes ig-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.ig-spin {
+    animation: ig-spin 1s linear infinite;
+}

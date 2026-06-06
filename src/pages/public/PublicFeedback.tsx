@@ -1,64 +1,56 @@
 import { useState } from 'react';
-import { Flame } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import { RatingForm } from '../../components/RatingForm';
+import { IssueReportForm } from '../../components/IssueReportForm';
 import { QuestionForm } from '../../components/QuestionForm';
-import './PublicFeedback.css';
+import './PublicFeedback.css'; 
 
-type Tab = 'rating' | 'qa';
-
-type PublicFeedbackProps = {
-  defaultTab?: Tab;
-};
-
-export function PublicFeedback({ defaultTab = 'rating' }: PublicFeedbackProps) {
-  const [activeTab, setActiveTab] = useState<Tab>(defaultTab);
-  const navigate = useNavigate();
-
-  const handleTabChange = (tab: Tab) => {
-    setActiveTab(tab);
-    // Actualiza la URL sin recargar la página
-    navigate(tab === 'rating' ? '/' : '/preguntas', { replace: true });
-  };
+export function PublicFeedback() {
+  const [activeTab, setActiveTab] = useState<'rating' | 'issue' | 'question'>('rating');
 
   return (
-    <>
+    // CORRECCIÓN: Se reemplaza el fragmento <> por el div con la clase wrapper
+    <div className="feedback-wrapper">
       <div className="ambient"></div>
       <div className="container">
-
+        
         <header className="header">
           <div className="logo-mark">
-            <div className="logo-flame">
-              <Flame strokeWidth={1.5} size={32} />
-            </div>
-            <span className="logo-text">Entre Alas</span>
+            <h1 className="logo-text">ENTRE ALAS</h1>
           </div>
-          <h1>Tu <em>opinión</em></h1>
-          <p style={{ marginTop: '8px' }}>Nos ayuda a servirte mejor cada vez</p>
+          <h2 className="subtitle">Tu <em>opinión</em></h2>
+          <p className="description">Nos ayuda a servirte mejor cada vez</p>
         </header>
 
         <div className="tabs">
-          <button
+          <button 
             type="button"
             className={`tab-btn ${activeTab === 'rating' ? 'active' : ''}`}
-            onClick={() => handleTabChange('rating')}
+            onClick={() => setActiveTab('rating')}
           >
             Calificar pedido
           </button>
-          <button
+          <button 
             type="button"
-            className={`tab-btn ${activeTab === 'qa' ? 'active' : ''}`}
-            onClick={() => handleTabChange('qa')}
+            className={`tab-btn ${activeTab === 'issue' ? 'active' : ''}`}
+            onClick={() => setActiveTab('issue')}
           >
-            Hacer una pregunta
+            Tuve un problema
+          </button>
+          <button 
+            type="button"
+            className={`tab-btn ${activeTab === 'question' ? 'active' : ''}`}
+            onClick={() => setActiveTab('question')}
+          >
+            Dudas
           </button>
         </div>
 
         <RatingForm isActive={activeTab === 'rating'} />
-        <QuestionForm isActive={activeTab === 'qa'} />
+        <IssueReportForm isActive={activeTab === 'issue'} />
+        <QuestionForm isActive={activeTab === 'question'} />
 
         <div className="footer">Entre Alas © 2026 — Todos los derechos reservados</div>
       </div>
-    </>
+    </div>
   );
 }

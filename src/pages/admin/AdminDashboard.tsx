@@ -4,28 +4,15 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { StatsOverview } from '../../components/StatsOverview';
 import { RatingsTable } from '../../components/RatingsTable';
+import { IncidentesGrid } from '../../components/IncidentesGrid';
 import { QuestionsGrid } from '../../components/Questiongrid';
 import { DashboardNav, type DashboardTab } from '../../components/DashboardNav';
 import './Admin.css';
-
-type Rating = {
-  id: string;
-  sabor: 'malo' | 'regular' | 'excelente';
-  llegada: 'frio' | 'tibio' | 'caliente';
-  empaque: 'batido' | 'bien' | 'intacto';
-  comentario: string | null;
-  created_at: string;
-};
-
-type Question = {
-  id: string;
-  pregunta: string;
-  telefono: string | null;
-  created_at: string;
-};
+import type { Incident, Rating, Question } from '../../types/schema';
 
 export function AdminDashboard() {
   const [ratings, setRatings]       = useState<Rating[]>([]);
+  const [incidentes, setIncidentes] = useState<Incident[]>([]);
   const [questions, setQuestions]   = useState<Question[]>([]);
   const [loading, setLoading]       = useState(true);
   const [error, setError]           = useState<string | null>(null);
@@ -41,15 +28,18 @@ export function AdminDashboard() {
           return;
         }
 
-        const [ratingsRes, questionsRes] = await Promise.all([
+        const [ratingsRes, incidentesRes, questionsRes] = await Promise.all([
           supabase.from('ratings').select('*').order('created_at', { ascending: false }).limit(100),
+          supabase.from('incidentes').select('*').order('created_at', { ascending: false }).limit(100),
           supabase.from('questions').select('*').order('created_at', { ascending: false }).limit(100),
         ]);
 
         if (ratingsRes.error) throw ratingsRes.error;
+        if (incidentesRes.error) throw incidentesRes.error;
         if (questionsRes.error) throw questionsRes.error;
 
         setRatings(ratingsRes.data || []);
+        setIncidentes(incidentesRes.data || []);
         setQuestions(questionsRes.data || []);
       } catch (err: any) {
         console.error('Error cargando dashboard:', err);
@@ -65,7 +55,40 @@ export function AdminDashboard() {
       if (event === 'SIGNED_OUT' || !session) navigate('/admin/login');
     });
 
-    return () => subscription.unsubscribe();
+    const channel = supabase.channel('admin-dashboard')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'incidentes' }, (payload) => {
+        setIncidentes((prev) => [payload.new as Incident, ...prev]);
+      })
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'incidentes' }, (payload) => {
+        setIncidentes((prev) => prev.map((inc) => (inc.id === payload.new.id ? (payload.new as Incident) : inc)));
+      })
+      .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'incidentes' }, (payload) => {
+        setIncidentes((prev) => prev.filter((inc) => inc.id !== payload.old?.id));
+      })
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'ratings' }, (payload) => {
+        setRatings((prev) => [payload.new as Rating, ...prev]);
+      })
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'ratings' }, (payload) => {
+        setRatings((prev) => prev.map((item) => (item.id === payload.new.id ? (payload.new as Rating) : item)));
+      })
+      .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'ratings' }, (payload) => {
+        setRatings((prev) => prev.filter((item) => item.id !== payload.old?.id));
+      })
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'questions' }, (payload) => {
+        setQuestions((prev) => [payload.new as Question, ...prev]);
+      })
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'questions' }, (payload) => {
+        setQuestions((prev) => prev.map((item) => (item.id === payload.new.id ? (payload.new as Question) : item)));
+      })
+      .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'questions' }, (payload) => {
+        setQuestions((prev) => prev.filter((item) => item.id !== payload.old?.id));
+      })
+      .subscribe();
+
+    return () => {
+      subscription.unsubscribe();
+      supabase.removeChannel(channel);
+    };
   }, [navigate]);
 
   const handleLogout = async () => {
@@ -102,14 +125,15 @@ export function AdminDashboard() {
           onChange={setActiveTab}
           badges={{
             calificaciones: ratings.length,
-            preguntas:       questions.length,
+            incidentes:       incidentes.length,
+            preguntas: questions.length,
           }}
         />
 
         {/* ── Sección: Resumen ── */}
         {activeTab === 'resumen' && (
           <section role="tabpanel" aria-label="Resumen estadístico">
-            <StatsOverview ratings={ratings} />
+            <StatsOverview ratings={ratings} incidentes={incidentes} questions={questions} />
 
             {/* Accesos rápidos */}
             <div className="dash-quicklinks">
@@ -121,9 +145,15 @@ export function AdminDashboard() {
               </button>
               <button
                 className="dash-quicklink-btn"
+                onClick={() => setActiveTab('incidentes')}
+              >
+                Ver incidentes urgentes →
+              </button>
+              <button
+                className="dash-quicklink-btn"
                 onClick={() => setActiveTab('preguntas')}
               >
-                Ver preguntas de WhatsApp →
+                Ver Preguntas WA →
               </button>
             </div>
           </section>
@@ -137,10 +167,18 @@ export function AdminDashboard() {
           </section>
         )}
 
-        {/* ── Sección: Preguntas WhatsApp ── */}
+        {/* ── Sección: Incidentes Urgentes ── */}
+        {activeTab === 'incidentes' && (
+          <section role="tabpanel" aria-label="Incidentes Urgentes">
+            <h2 className="section-title">Incidentes Urgentes</h2>
+            <IncidentesGrid incidentes={incidentes} />
+          </section>
+        )}
+
+        {/* ── Sección: Preguntas WA ── */}
         {activeTab === 'preguntas' && (
-          <section role="tabpanel" aria-label="Preguntas para WhatsApp">
-            <h2 className="section-title">Preguntas para WhatsApp</h2>
+          <section role="tabpanel">
+            <h2 className="section-title">Generador de Contenido WhatsApp</h2>
             <QuestionsGrid questions={questions} />
           </section>
         )}
